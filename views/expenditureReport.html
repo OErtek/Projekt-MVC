@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenditure Report</title>
+    <link rel="stylesheet" href="./styles.css"> 
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container">
+        <h1 class="logo">Expense Tracker</h1>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/add">Add Expense</a></li>
+            <li><a href="/edit">Edit Expense</a></li>
+            <li><a href="/reports">Reports</a></li>        </ul>
+    </div>
+</nav>
+
+<div class="container">
+
+<h2>Expenditure Report</h2>
+<div id="expenditureReport"></div> 
+
+</div>
+
+<script>
+    function showExpenditureReport() {
+        return fetch('/expenditure-report', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(report => {
+            const expenditureReportDiv = document.getElementById('expenditureReport');
+            
+            let maxAmount = 0;
+            let maxCategory = '';
+            report.forEach(expense => {
+                if (parseFloat(expense.amount) > maxAmount) {
+                    maxAmount = parseFloat(expense.amount);
+                    maxCategory = expense.category;
+                }
+            });
+
+            expenditureReportDiv.innerHTML = `
+                <h3>Highest Expenditure:</h3>
+                <p>Category: ${maxCategory}</p>
+                <p>Amount: ${maxAmount}</p>
+
+            `;
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+        });
+    }
+
+    showExpenditureReport();
+</script>
+
+</body>
+</html>

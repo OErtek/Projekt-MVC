@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container">
+        <h1 class="logo">Expense Tracker</h1>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/add">Add Expense</a></li>
+            <li><a href="/edit">Edit Expense</a></li>
+            <li><a href="/reports">Reports</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <h2>Expenditure List</h2>
+    <div id="expenditureList"></div>
+
+    <script>
+        function getExpenditureList() {
+            return fetch('/expenditure-list', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+            });
+        }
+
+        getExpenditureList().then(expenditures => {
+            const expenditureList = document.getElementById('expenditureList');
+            expenditures.forEach(expenditure => {
+                const categoryClass = expenditure.category.toLowerCase().replace(' ', '-');
+                expenditureList.innerHTML += `
+                    <div class="expenditure-item ${categoryClass}">
+                        <p>Category: ${expenditure.category}</p>
+                        <p>Amount: ${expenditure.amount}</p>
+                        <p>Date: ${expenditure.date}</p>
+                    </div>
+                `;
+            });
+        });
+    </script>
+</div>
+
+</body>
+</html>
